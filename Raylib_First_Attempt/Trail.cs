@@ -80,6 +80,7 @@ namespace Raylib_First_Attempt
         public void Update()
         {
             Move();
+            checkPosition();
             foreach (Letter letter in letters)
             {
                 letter.Update();

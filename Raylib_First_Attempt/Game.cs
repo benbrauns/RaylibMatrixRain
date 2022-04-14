@@ -34,7 +34,8 @@ namespace Raylib_First_Attempt
         private void UpdateTrails()
         {
             AddTrails();
-            foreach (Trail trail in trails)
+            List<Trail> ts = new List<Trail>(trails);
+            foreach (Trail trail in ts)
             {
                 trail.Update();
             }
