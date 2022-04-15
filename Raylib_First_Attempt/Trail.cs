@@ -9,21 +9,23 @@ namespace Raylib_First_Attempt
         private List<Letter> letters = new List<Letter>();
         private int length, letterSize, windowWidth;
         public int windowHeight;
+        private Font font;
         private Vector2 position;
         private Vector2 velocity;
         private const int letterPadding = 2;
 
 
-        public Trail(Game parent, int width, int height)
+        public Trail(Game parent, int width, int height, Font Font)
         {
             game = parent;
             windowWidth = width;
             windowHeight = height;
+            font = Font;
             Random rnd = new Random();
             length = rnd.Next(10, 30);
             letterSize = rnd.Next(0, 43) * 2 + 10;
             position = new Vector2(rnd.Next(0,width), -1 * ((letterSize * length) + (letterPadding * (length - 1))));
-            velocity = new Vector2(0, rnd.Next(1, 5));
+            velocity = new Vector2(0, letterSize * 4);
             CreateLetters();
         }
 
@@ -59,9 +61,9 @@ namespace Raylib_First_Attempt
             }
         }
 
-        private void Move()
+        private void Move(float dt)
         {
-            position += velocity;
+            position += velocity * dt;
         }
 
 
@@ -69,21 +71,20 @@ namespace Raylib_First_Attempt
         {
             foreach (Letter letter in letters)
             {
-                /*Raylib.DrawTextEx(Raylib.GetFontDefault,)*/
-                /*Raylib.DrawText("Hello, world!", 12, 12, 20, Color.WHITE);*/
-                Raylib.DrawText(letter.letter,(int)letter.position.X,(int)letter.position.Y,letterSize,Color.GREEN);
+                /*Raylib.DrawText(letter.letter,(int)letter.position.X,(int)letter.position.Y,letterSize,Color.GREEN);*/
+                Raylib.DrawTextEx(font, letter.letter, letter.position, letterSize, letterPadding, Color.GREEN);
             }
         }
 
 
 
-        public void Update()
+        public void Update(float dt)
         {
-            Move();
+            Move(dt);
             checkPosition();
             foreach (Letter letter in letters)
             {
-                letter.Update();
+                letter.Update(dt);
             }
         }
 

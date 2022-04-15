@@ -1,16 +1,31 @@
-﻿using Raylib_cs;
+﻿using System.Numerics;
+using Raylib_cs;
+using static Raylib_cs.Raylib;
+using System.IO;
+
 
 namespace Raylib_First_Attempt
 {
+
+    
+
     internal class Game
     {
         private int maxTrails, width, height;
         private List<Trail> trails = new List<Trail>();
-        public Game(int Width, int Height, int MaxTrails)
+        Font font;
+        public Shader blurShader;
+        RenderTexture2D target;
+
+
+        public Game(int Width, int Height, int MaxTrails, Font Font)
         {
+            font = Font;
             width = Width;
             height = Height;
             maxTrails = MaxTrails;
+            blurShader = LoadShader(null, "resources/shaders/glsl330/blur.fs");
+            target = LoadRenderTexture(Width, Height);
         }
 
 
@@ -20,7 +35,7 @@ namespace Raylib_First_Attempt
             int amount = Math.Min(10, maxTrails - curr_count);
             for (int i = 0; i < amount; i++)
             {
-                Trail trail = new Trail(this, width,height);
+                Trail trail = new Trail(this, width,height, font);
                 trails.Add(trail);
             }
         }
@@ -34,10 +49,11 @@ namespace Raylib_First_Attempt
         private void UpdateTrails()
         {
             AddTrails();
+            float dt = GetFrameTime();
             List<Trail> ts = new List<Trail>(trails);
             foreach (Trail trail in ts)
             {
-                trail.Update();
+                trail.Update(dt);
             }
         }
 
@@ -50,19 +66,31 @@ namespace Raylib_First_Attempt
         }
 
 
-
         public void Run()
         {
-            Raylib.BeginDrawing();
-            Raylib.ClearBackground(Color.BLACK);
+            BeginDrawing();
+            ClearBackground(Color.BLACK);
 
+            BeginTextureMode(target);
+            ClearBackground(Color.BLACK);
             UpdateTrails();
             DrawTrails();
 
-            Raylib.DrawFPS(0, 0);
-            Raylib.DrawText("Hello, world!", 12, 12, 20, Color.WHITE);
+            DrawFPS(0, 0);
+            EndTextureMode();
+            
 
-            Raylib.EndDrawing();
+           
+            /*Raylib.DrawText("Hello, world!", 12, 12, 20, Color.WHITE);*/
+
+            BeginShaderMode(blurShader);
+            DrawTextureRec(target.texture, new Rectangle(0, 0, target.texture.width, -target.texture.height), new Vector2(0, 0), Color.WHITE);
+            EndShaderMode();
+
+
+            EndDrawing();
+
+            
         }
 
 

@@ -1,5 +1,5 @@
 ﻿using Raylib_cs;
-
+using static Raylib_cs.Raylib;
 namespace Raylib_First_Attempt
 {
     static class Program
@@ -8,23 +8,29 @@ namespace Raylib_First_Attempt
         {
             const int WIDTH = 1920;
             const int HEIGHT = 1080;
-            const int FPS = 240;
+            const int FPS = 60;
 
 
             const int MAX_TRAILS = 100;
+            const int screenWidth = WIDTH;
+            const int screenHeight = HEIGHT;
+
+            SetConfigFlags(ConfigFlags.FLAG_MSAA_4X_HINT);
 
 
+            InitWindow(WIDTH, HEIGHT, "Hello World");
+            Font font = LoadFontEx("resources/fonts/lucon.ttf", 95, null, 250);
+            Game game = new Game(WIDTH, HEIGHT, MAX_TRAILS, font);
+            SetTargetFPS(FPS);
 
-            Game game = new Game(WIDTH, HEIGHT, MAX_TRAILS);
-            Raylib.InitWindow(WIDTH, HEIGHT, "Hello World");
-            Raylib.SetTargetFPS(FPS);
+            
 
-            while (!Raylib.WindowShouldClose())
+            while (!WindowShouldClose())
             {
                 game.Run();
             }
-
-            Raylib.CloseWindow();
+            UnloadShader(game.blurShader);
+            CloseWindow();
         }
     }
 }
